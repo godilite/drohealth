@@ -21,6 +21,7 @@ dependencies:
   get_it: ^5.0.6
   sliding_up_panel: ^1.0.2
   intl: ^0.16.1
+  observable_ish: ^2.1.5
 
 dev_dependencies:
   flutter_test:
