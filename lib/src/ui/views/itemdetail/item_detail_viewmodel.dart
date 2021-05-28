@@ -1,20 +1,35 @@
 import 'package:drohealth/src/model/item_model.dart';
+import 'package:drohealth/src/services/shopping_service.dart';
 import 'package:stacked/stacked.dart';
 
-class ItemDetailViewModel extends ReactiveViewModel {
-  ItemModel get selectedItem => ItemModel(
-      amount: 2000,
-      quantity: 1,
-      chemicalName: 'Cefuroxime Axetil.',
-      drugName: 'Kezitil Susp.',
-      description: 'Oral suspension - 230mg',
-      dispensedIn: 'Pack',
-      id: 'XHSDFASDJS',
-      packSize: '3X7',
-      phamarcy: 'Emzor Pharmaceutical',
-      imageLink: "https://via.placeholder.com/150");
+import '../../../../locator.dart';
 
-  void addToCart() {}
+class ItemDetailViewModel extends ReactiveViewModel {
+  ShoppingService _shoppingService = locator<ShoppingService>();
+  ItemModel get selectedItem => _shoppingService.selectedItem;
+  List<ItemModel> get cartItems => _shoppingService.shoppingCart;
+  int get cartCount => _shoppingService.cartCount;
+  void addToCart() {
+    if (cartItems.contains(selectedItem)) return;
+    _shoppingService.addItemToCart(selectedItem);
+    notifyListeners();
+  }
+
+  void increaseQuantity() {
+    selectedItem.quantity++;
+    selectedItem.amount = selectedItem.quantity * selectedItem.amount;
+    notifyListeners();
+  }
+
+  void decreaseQuantity() {
+    if (selectedItem.quantity > 1) {
+      selectedItem.amount = selectedItem.amount ~/ selectedItem.quantity;
+
+      selectedItem.quantity--;
+    }
+    notifyListeners();
+  }
+
   @override
-  List<ReactiveServiceMixin> get reactiveServices => [];
+  List<ReactiveServiceMixin> get reactiveServices => [_shoppingService];
 }

@@ -1,4 +1,5 @@
 import 'package:drohealth/src/constants/colors.dart';
+import 'package:drohealth/src/model/item_model.dart';
 import 'package:drohealth/src/ui/views/cart/cart_view.dart';
 import 'package:drohealth/src/ui/views/home/home_viewmodel.dart';
 import 'package:flutter/cupertino.dart';
@@ -14,15 +15,10 @@ class HomeView extends StatefulWidget {
 
 class _HomeViewState extends State<HomeView> {
   bool hideTop = true;
-  bool _showSearch = false;
-  void openSearch() {
-    setState(() {
-      _showSearch = !_showSearch;
-    });
-  }
 
   @override
   Widget build(BuildContext context) {
+    var height = MediaQuery.of(context).size.height;
     return ViewModelBuilder<HomeViewModel>.reactive(
         viewModelBuilder: () => HomeViewModel(),
         builder: (context, model, child) {
@@ -91,7 +87,7 @@ class _HomeViewState extends State<HomeView> {
                           maxRadius: 15,
                           backgroundColor: Colors.white,
                           child: Text(
-                            '${model.cartItem.length}',
+                            '${model.cartCount}',
                             style: TextStyle(color: AppColors.darkGrey),
                           ),
                         )
@@ -127,11 +123,14 @@ class _HomeViewState extends State<HomeView> {
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceAround,
                         children: [
-                          CircleAvatar(
-                            backgroundColor: AppColors.lightGrey,
-                            child: Icon(
-                              Icons.swap_vert,
-                              color: AppColors.darkGrey,
+                          InkWell(
+                            onTap: () => model.sortAlphabetically(),
+                            child: CircleAvatar(
+                              backgroundColor: AppColors.lightGrey,
+                              child: Icon(
+                                Icons.swap_vert,
+                                color: AppColors.darkGrey,
+                              ),
                             ),
                           ),
                           CircleAvatar(
@@ -142,7 +141,7 @@ class _HomeViewState extends State<HomeView> {
                             ),
                           ),
                           InkWell(
-                            onTap: () => openSearch(),
+                            onTap: () => model.toggleSearch(),
                             child: CircleAvatar(
                               backgroundColor: AppColors.lightGrey,
                               child: Icon(
@@ -158,7 +157,7 @@ class _HomeViewState extends State<HomeView> {
                       height: 10,
                     ),
                     Visibility(
-                      visible: _showSearch,
+                      visible: model.searchOpen,
                       child: SizedBox(
                         height: 60,
                         child: Padding(
@@ -166,112 +165,35 @@ class _HomeViewState extends State<HomeView> {
                               horizontal: 8.0, vertical: 6),
                           child: TextField(
                             style: TextStyle(fontSize: 20),
+                            onChanged: (String pattern) =>
+                                model.onSearch(pattern),
                             decoration: InputDecoration(
                                 contentPadding:
                                     EdgeInsets.only(bottom: 30, right: 10),
                                 prefixIcon: Icon(Icons.search),
                                 alignLabelWithHint: true,
-                                suffix: Icon(Icons.close),
+                                suffix: InkWell(
+                                    onTap: model.toggleSearch,
+                                    child: Icon(Icons.close)),
                                 border: OutlineInputBorder(
                                     borderRadius: BorderRadius.circular(30))),
                           ),
                         ),
                       ),
                     ),
-                    Expanded(
+                    SizedBox(
+                      height: height * 0.766,
                       child: GridView.count(
-                          shrinkWrap: true,
                           crossAxisCount: 2,
+                          shrinkWrap: true,
                           padding: EdgeInsets.all(10),
                           childAspectRatio: 0.7,
                           crossAxisSpacing: 10,
                           mainAxisSpacing: 15,
                           children: model.drugs
-                              .map((e) => InkWell(
-                                    onTap: () => model.openDetail(),
-                                    child: Container(
-                                      decoration: BoxDecoration(
-                                        color: Colors.white,
-                                        borderRadius: BorderRadius.circular(10),
-                                        boxShadow: [
-                                          BoxShadow(
-                                              offset: Offset(1, 1),
-                                              color: AppColors.grey
-                                                  .withOpacity(0.7),
-                                              blurRadius: 5)
-                                        ],
-                                      ),
-                                      child: Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.end,
-                                        children: [
-                                          Padding(
-                                            padding: const EdgeInsets.all(10.0),
-                                            child: SizedBox(
-                                              height: 120,
-                                              width: 200,
-                                              child: Image(
-                                                image: NetworkImage(
-                                                    "${e.imageLink}"),
-                                              ),
-                                            ),
-                                          ),
-                                          Padding(
-                                            padding: const EdgeInsets.all(8.0),
-                                            child: Column(
-                                              crossAxisAlignment:
-                                                  CrossAxisAlignment.start,
-                                              children: [
-                                                Text(
-                                                  '${e.drugName}',
-                                                  style: Theme.of(context)
-                                                      .textTheme
-                                                      .headline5,
-                                                ),
-                                                Text(
-                                                  '${e.chemicalName}',
-                                                  style: TextStyle(
-                                                      color: AppColors.grey),
-                                                ),
-                                                Text(
-                                                  '${e.description}',
-                                                  style: TextStyle(
-                                                      color: AppColors.grey),
-                                                ),
-                                              ],
-                                            ),
-                                          ),
-                                          Expanded(
-                                            child: Align(
-                                              alignment: Alignment.bottomRight,
-                                              child: Padding(
-                                                padding: EdgeInsets.symmetric(
-                                                  horizontal: 8.0,
-                                                ),
-                                                child: FlatButton(
-                                                    color: AppColors.buttonGrey,
-                                                    shape:
-                                                        RoundedRectangleBorder(
-                                                            borderRadius:
-                                                                BorderRadius
-                                                                    .circular(
-                                                                        30)),
-                                                    onPressed: () {},
-                                                    child: Text('${e.amount}',
-                                                        style: TextStyle(
-                                                            color:
-                                                                Colors.white))),
-                                              ),
-                                            ),
-                                          ),
-                                          SizedBox(
-                                            height: 5,
-                                          )
-                                        ],
-                                      ),
-                                    ),
+                              .map((e) => ItemCard(
+                                    item: e,
+                                    model: model,
                                   ))
                               .toList()),
                     ),
@@ -281,5 +203,86 @@ class _HomeViewState extends State<HomeView> {
             ),
           );
         });
+  }
+}
+
+class ItemCard extends StatelessWidget {
+  final ItemModel item;
+  final HomeViewModel model;
+  const ItemCard({Key key, @required this.item, this.model}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return InkWell(
+      onTap: () => model.openDetail(item),
+      child: Container(
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(10),
+          boxShadow: [
+            BoxShadow(
+                offset: Offset(1, 1),
+                color: AppColors.grey.withOpacity(0.7),
+                blurRadius: 5)
+          ],
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisAlignment: MainAxisAlignment.end,
+          children: [
+            Padding(
+              padding: const EdgeInsets.all(10.0),
+              child: SizedBox(
+                height: 120,
+                width: 200,
+                child: Image(
+                  image: NetworkImage("${item.imageLink}"),
+                ),
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    '${item.drugName}',
+                    style: Theme.of(context).textTheme.headline5,
+                  ),
+                  Text(
+                    '${item.chemicalName}',
+                    style: TextStyle(color: AppColors.grey),
+                  ),
+                  Text(
+                    '${item.description}',
+                    style: TextStyle(color: AppColors.grey),
+                  ),
+                ],
+              ),
+            ),
+            Expanded(
+              child: Align(
+                alignment: Alignment.bottomRight,
+                child: Padding(
+                  padding: EdgeInsets.symmetric(
+                    horizontal: 8.0,
+                  ),
+                  child: FlatButton(
+                      color: AppColors.buttonGrey,
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(30)),
+                      onPressed: () {},
+                      child: Text('₦ ${item.amount}',
+                          style: TextStyle(color: Colors.white))),
+                ),
+              ),
+            ),
+            SizedBox(
+              height: 5,
+            )
+          ],
+        ),
+      ),
+    );
   }
 }

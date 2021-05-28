@@ -56,7 +56,7 @@ class CartView extends StatelessWidget {
                     maxRadius: 15,
                     backgroundColor: Colors.white,
                     child: Text(
-                      '${model.cartItem.length}',
+                      '${model.cartCount}',
                       style: TextStyle(color: AppColors.darkGrey),
                     ),
                   ),
@@ -113,7 +113,7 @@ class CartView extends StatelessWidget {
                                             height: 5,
                                           ),
                                           Text(
-                                            'x1',
+                                            'x${e.quantity}',
                                             style:
                                                 TextStyle(color: Colors.white),
                                           ),
@@ -138,39 +138,52 @@ class CartView extends StatelessWidget {
                                           mainAxisAlignment:
                                               MainAxisAlignment.spaceBetween,
                                           children: [
-                                            Icon(CupertinoIcons.trash),
+                                            InkWell(
+                                                onTap: () => model.delete(e.id),
+                                                child: Icon(
+                                                    CupertinoIcons.trash,
+                                                    color: Colors.white)),
                                             Row(
                                               mainAxisSize: MainAxisSize.min,
                                               children: [
-                                                CircleAvatar(
-                                                  backgroundColor: Colors.white,
-                                                  child: Text(
-                                                    '-',
-                                                    style: TextStyle(
-                                                        color: AppColors
-                                                            .darkPurple),
+                                                InkWell(
+                                                  onTap: () =>
+                                                      model.decrease(e.id),
+                                                  child: CircleAvatar(
+                                                    backgroundColor:
+                                                        Colors.white,
+                                                    child: Text(
+                                                      '-',
+                                                      style: TextStyle(
+                                                          color: AppColors
+                                                              .darkPurple),
+                                                    ),
                                                   ),
                                                 ),
                                                 SizedBox(
                                                   width: 5,
                                                 ),
                                                 Text(
-                                                  '1',
+                                                  '${e.quantity}',
                                                   style: TextStyle(
                                                       color: Colors.white),
                                                 ),
                                                 SizedBox(
                                                   width: 5,
                                                 ),
-                                                CircleAvatar(
-                                                    backgroundColor:
-                                                        Colors.white,
-                                                    child: Text(
-                                                      '+',
-                                                      style: TextStyle(
-                                                          color: AppColors
-                                                              .darkPurple),
-                                                    ))
+                                                InkWell(
+                                                  onTap: () =>
+                                                      model.increase(e.id),
+                                                  child: CircleAvatar(
+                                                      backgroundColor:
+                                                          Colors.white,
+                                                      child: Text(
+                                                        '+',
+                                                        style: TextStyle(
+                                                            color: AppColors
+                                                                .darkPurple),
+                                                      )),
+                                                )
                                               ],
                                             )
                                           ],
@@ -187,7 +200,7 @@ class CartView extends StatelessWidget {
                     style: TextStyle(color: Colors.white),
                   ),
                   trailing: Text(
-                    'N2,320',
+                    '₦ ${model.total}',
                     style: TextStyle(color: Colors.white),
                   )),
               Padding(
