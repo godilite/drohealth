@@ -263,7 +263,7 @@ class ItemDetailView extends StatelessWidget {
                       Align(
                         alignment: Alignment.center,
                         child: Text(
-                          "1 pack of galic oil container 3 units of 10 Tablet(s)",
+                          "1 pack of ${model.selectedItem.drugName} container 3 units of 10 Tablet(s)",
                           style: TextStyle(color: AppColors.grey),
                           textAlign: TextAlign.center,
                         ),
@@ -285,6 +285,131 @@ class ItemDetailView extends StatelessWidget {
                                   icon: Icon(CupertinoIcons.bag_badge_plus),
                                   onPressed: () {
                                     model.addToCart();
+                                    showDialog(
+                                        context: context,
+                                        builder: (context) {
+                                          return Center(
+                                            child: Container(
+                                              child: Stack(
+                                                children: [
+                                                  Positioned(
+                                                    top: 250,
+                                                    left: 40,
+                                                    right: 40,
+                                                    child: Container(
+                                                      height: 300,
+                                                      width: 300,
+                                                      padding:
+                                                          EdgeInsets.all(40),
+                                                      decoration: BoxDecoration(
+                                                          borderRadius:
+                                                              BorderRadius
+                                                                  .circular(10),
+                                                          color: Colors.white),
+                                                      child: Column(
+                                                        mainAxisAlignment:
+                                                            MainAxisAlignment
+                                                                .spaceAround,
+                                                        crossAxisAlignment:
+                                                            CrossAxisAlignment
+                                                                .center,
+                                                        children: [
+                                                          Text(
+                                                            'Successful',
+                                                            textAlign: TextAlign
+                                                                .center,
+                                                            style: TextStyle(
+                                                                fontSize: 18,
+                                                                decoration:
+                                                                    TextDecoration
+                                                                        .none,
+                                                                color: AppColors
+                                                                    .kBlack),
+                                                          ),
+                                                          Text(
+                                                            '${model.selectedItem.drugName} has been added to your bag',
+                                                            textAlign: TextAlign
+                                                                .center,
+                                                            style: TextStyle(
+                                                                fontSize: 18,
+                                                                decoration:
+                                                                    TextDecoration
+                                                                        .none,
+                                                                color: AppColors
+                                                                    .kBlack),
+                                                          ),
+                                                          Row(
+                                                            children: [
+                                                              Expanded(
+                                                                child:
+                                                                    FlatButton(
+                                                                  color: Color(
+                                                                      0xff0db7b5),
+                                                                  onPressed:
+                                                                      () {
+                                                                    controller
+                                                                        .open();
+                                                                  },
+                                                                  child: Text(
+                                                                    'View Bag',
+                                                                    style: TextStyle(
+                                                                        color: Colors
+                                                                            .white),
+                                                                  ),
+                                                                ),
+                                                              ),
+                                                            ],
+                                                          ),
+                                                          Row(
+                                                            children: [
+                                                              Expanded(
+                                                                child:
+                                                                    FlatButton(
+                                                                  color: Color(
+                                                                      0xff0db7b5),
+                                                                  onPressed:
+                                                                      () {
+                                                                    Navigator.pop(
+                                                                        context);
+                                                                  },
+                                                                  child: Text(
+                                                                      'Done',
+                                                                      style: TextStyle(
+                                                                          color:
+                                                                              Colors.white)),
+                                                                ),
+                                                              ),
+                                                            ],
+                                                          )
+                                                        ],
+                                                      ),
+                                                    ),
+                                                  ),
+                                                  Positioned(
+                                                    top: 210,
+                                                    left: 0,
+                                                    right: 0,
+                                                    child: CircleAvatar(
+                                                      backgroundColor:
+                                                          Colors.white,
+                                                      radius: 40,
+                                                      child: CircleAvatar(
+                                                        radius: 35,
+                                                        child: Icon(
+                                                          Icons.check,
+                                                          color: Colors.white,
+                                                          size: 40,
+                                                        ),
+                                                        backgroundColor:
+                                                            Color(0xff0ab7b4),
+                                                      ),
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
+                                            ),
+                                          );
+                                        });
                                   },
                                   label: Padding(
                                     padding: const EdgeInsets.symmetric(
